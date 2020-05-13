@@ -1,0 +1,47 @@
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+%matplotlib inline
+df=pd.read_csv('KNN_Project_Data')
+df.head()
+sns.pairplot(df,hue='TARGET CLASS',palette='coolwarm')
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+scaler.fit(df.drop('TARGET CLASS',axis=1))
+sf=scaler.transform(df.drop('TARGET CLASS',axis=1))
+feat=pd.DataFrame(sf,columns=df.columns[:-1])
+feat.head()
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(feat,df['TARGET CLASS'], test_size=0.25, random_state=101)
+from sklearn.neighbors import KNeighborsClassifier
+knn_mod=KNeighborsClassifier(n_neighbors=1)
+knn_mod.fit(X_train,y_train)
+pred=knn_mod.predict(X_test)
+from sklearn.metrics import confusion_matrix,classification_report
+print(confusion_matrix(y_test,pred))
+print(classification_report(y_test,pred))
+
+
+error_rate = []
+for i in range(1,40):
+    knn_mod=KNeighborsClassifier(n_neighbors=i)
+    knn_mod.fit(X_train,y_train)
+    pred=knn_mod.predict(X_test)
+    error_rate.append(np.mean(pred != y_test))
+
+plt.figure(figsize=(10,6))
+plt.plot(range(1,40),error_rate,color='blue', linestyle='dashed', marker='o',
+         markerfacecolor='red', markersize=10)
+plt.title('Error Rate vs. K Value')
+plt.xlabel('K')
+plt.ylabel('Error Rate')
+
+
+ knn_mod=KNeighborsClassifier(n_neighbors=31)
+    knn_mod.fit(X_train,y_train)
+    pred=knn_mod.predict(X_test)
+    print(classification_report(y_test,pred))
+    print(confusion_matrix(y_test,pred))
+
+  
